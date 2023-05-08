@@ -10,8 +10,9 @@ import {
 import { fetchContacts, deleteContact } from 'redux/operations';
 
 import { ContactItem } from 'components/ContactItem/ContactItem';
-import { List } from './ContactList.styled';
+import { List, Error } from './ContactList.styled';
 import { EmptyListIcon } from 'components/EmptyListIcon/EmptyListIcon';
+import { Loader } from 'components/Loader/Loader';
 
 export const ContactList = () => {
   const contacts = useSelector(selectVisibleContacts);
@@ -19,28 +20,32 @@ export const ContactList = () => {
   const error = useSelector(selectError);
   const dispatch = useDispatch();
 
+  const IsEmpty = contacts.length === 0;
+
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
   return (
-    <List>
-      {isLoading && <div>Loading...</div>}
-      {error && <div>{error}</div>}
-      {contacts.length === 0 ? (
+    <>
+      {isLoading && <Loader />}
+      {error && <Error>{error}</Error>}
+      {IsEmpty ? (
         <EmptyListIcon />
       ) : (
-        contacts.map(({ id, name, number }) => (
-          <ContactItem
-            key={id}
-            name={name}
-            number={number}
-            onDelete={() => {
-              dispatch(deleteContact(id));
-            }}
-          />
-        ))
+        <List>
+          {contacts.map(({ id, name, number }) => (
+            <ContactItem
+              key={id}
+              name={name}
+              number={number}
+              onDelete={() => {
+                dispatch(deleteContact(id));
+              }}
+            />
+          ))}
+        </List>
       )}
-    </List>
+    </>
   );
 };

@@ -5,3 +5,10 @@ export const List = styled.ul`
   padding: 0;
   margin: 10px 0;
 `;
+
+export const Error = styled.p`
+  text-align: center;
+  font-size: 20px;
+  margin: 20px 0;
+  color: orangered;
+`;

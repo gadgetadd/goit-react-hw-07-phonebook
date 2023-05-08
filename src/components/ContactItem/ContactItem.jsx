@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import { MdOutlineDeleteForever } from 'react-icons/md';
 import { RiContactsLine } from 'react-icons/ri';
+import { useSelector } from 'react-redux';
+
+import { selectIsLoading } from 'redux/selectors';
+
 import {
   ListItem,
   Contact,
@@ -9,13 +13,14 @@ import {
 } from './ContactItem.styled';
 
 export const ContactItem = ({ name, number, onDelete }) => {
+  const isLoading = useSelector(selectIsLoading);
   return (
     <ListItem>
       <ContactWrapper>
         <RiContactsLine size="20px" color="grey" />
         <Contact>{`${name}: ${number}`}</Contact>
       </ContactWrapper>
-      <Button type="button" onClick={onDelete}>
+      <Button type="button" onClick={onDelete} disabled={isLoading}>
         <MdOutlineDeleteForever size="25px" color="grey" />
       </Button>
     </ListItem>

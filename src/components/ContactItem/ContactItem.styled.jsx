@@ -24,6 +24,10 @@ export const Button = styled.button`
   border-radius: 5px;
   border: 1px solid grey;
   background-color: #fcfcfc;
+
+  &:disabled {
+    opacity: 0.5;
+  }
 `;
 
 export const ContactWrapper = styled.div`
