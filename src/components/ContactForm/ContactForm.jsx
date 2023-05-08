@@ -1,24 +1,26 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+
 import { Report } from 'notiflix/build/notiflix-report-aio';
 import { BsPersonAdd } from 'react-icons/bs';
 
-import { selectContacts } from 'redux/selectors';
-import { addContact } from 'redux/operations';
+import {
+  useAddContactMutation,
+  useFetchContactsQuery,
+} from 'redux/contactsApi';
 
 import { Form, Label, Input, Button } from './ContactForm.styled';
 
 export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const contacts = useSelector(selectContacts);
-  const dispatch = useDispatch();
+  const { data: contacts } = useFetchContactsQuery();
+  const [addContact] = useAddContactMutation();
 
   const formReset = () => {
     setName('');
     setNumber('');
   };
-
+ 
   const inputChangeHandler = e => {
     const { name, value } = e.currentTarget;
     switch (name) {
@@ -39,7 +41,6 @@ export const ContactForm = () => {
       name: { value: name },
       number: { value: number },
     } = e.currentTarget.elements;
-
     const isExists = contacts.some(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
@@ -50,7 +51,7 @@ export const ContactForm = () => {
         'Ok'
       );
     }
-    dispatch(addContact({ name, number }));
+    addContact({ name, number });
 
     formReset();
   };

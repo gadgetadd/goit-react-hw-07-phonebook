@@ -1,13 +1,7 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import {
-  selectIsLoading,
-  selectError,
-  selectVisibleContacts,
-} from 'redux/selectors';
-
-import { fetchContacts, deleteContact } from 'redux/operations';
+import { useFetchContactsQuery } from 'redux/contactsApi';
+import { selectFilter } from 'redux/selectors';
 
 import { ContactItem } from 'components/ContactItem/ContactItem';
 import { List, Error } from './ContactList.styled';
@@ -15,34 +9,26 @@ import { EmptyListIcon } from 'components/EmptyListIcon/EmptyListIcon';
 import { Loader } from 'components/Loader/Loader';
 
 export const ContactList = () => {
-  const contacts = useSelector(selectVisibleContacts);
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-  const dispatch = useDispatch();
+  const { data = [], isError, isLoading } = useFetchContactsQuery();
 
-  const IsEmpty = contacts.length === 0;
+  const filter = useSelector(selectFilter);
 
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
+  const visibleContacts = data.filter(contact =>
+    contact.name.toLowerCase().includes(filter)
+  );
+
+  const IsEmpty = visibleContacts.length === 0;
 
   return (
     <>
       {isLoading && <Loader />}
-      {error && <Error>{error}</Error>}
+      {isError && <Error>{'Something went wrong. Please, reload the page'}</Error>}
       {IsEmpty ? (
         <EmptyListIcon />
       ) : (
         <List>
-          {contacts.map(({ id, name, number }) => (
-            <ContactItem
-              key={id}
-              name={name}
-              number={number}
-              onDelete={() => {
-                dispatch(deleteContact(id));
-              }}
-            />
+          {visibleContacts.map(contact => (
+            <ContactItem key={contact.id} {...contact} />
           ))}
         </List>
       )}

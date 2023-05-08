@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import { MdOutlineDeleteForever } from 'react-icons/md';
 import { RiContactsLine } from 'react-icons/ri';
-import { useSelector } from 'react-redux';
 
-import { selectIsLoading } from 'redux/selectors';
+import { useDeleteContactMutation } from 'redux/contactsApi';
 
 import {
   ListItem,
@@ -12,15 +11,20 @@ import {
   ContactWrapper,
 } from './ContactItem.styled';
 
-export const ContactItem = ({ name, number, onDelete }) => {
-  const isLoading = useSelector(selectIsLoading);
+export const ContactItem = ({ name, number, id }) => {
+  const [deleteContact, { isLoading }] = useDeleteContactMutation();
+
   return (
     <ListItem>
       <ContactWrapper>
         <RiContactsLine size="20px" color="grey" />
         <Contact>{`${name}: ${number}`}</Contact>
       </ContactWrapper>
-      <Button type="button" onClick={onDelete} disabled={isLoading}>
+      <Button
+        type="button"
+        disabled={isLoading}
+        onClick={() => deleteContact(id)}
+      >
         <MdOutlineDeleteForever size="25px" color="grey" />
       </Button>
     </ListItem>
@@ -30,5 +34,5 @@ export const ContactItem = ({ name, number, onDelete }) => {
 ContactItem.propTypes = {
   name: PropTypes.string.isRequired,
   number: PropTypes.string.isRequired,
-  onDelete: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
 };
